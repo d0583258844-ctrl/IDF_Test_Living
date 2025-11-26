@@ -2,6 +2,7 @@
 from fastapi import FastAPI, HTTPException, UploadFile, File
 from fastapi.responses import JSONResponse
 from soldier_and_base_builders import Soldier
+from operator import itemgetter
 import sqlite3
 import io
 import csv
@@ -22,7 +23,10 @@ async def import_csv(file: UploadFile = File(...)):
     csv_reader = csv.DictReader(io.StringIO(csv_text))
     for row in csv_reader:
         tempor_list.append(row)
-    return tempor_list
-        
-
+        row["distance"]=int(row["distance"])
+    print (sort_solder_by_KM(tempor_list))
     
+
+
+def sort_solder_by_KM(list_soldiers: list[dict]) -> list[dict]:
+    return sorted(list_soldiers, key=itemgetter('distance'),reverse=True)
