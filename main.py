@@ -1,28 +1,28 @@
 
-from fastapi import FastAPI, UploadFile, File
+from fastapi import FastAPI, HTTPException, UploadFile, File
 from fastapi.responses import JSONResponse
-import os
+from soldier_and_base_builders import Soldier
+import sqlite3
+import io
+import csv
 
-app = FastAPI(title = "Soldiers'_quarters")
-UPLOAD_DIR = "uploads"
-os.makedirs(UPLOAD_DIR, exist_ok=True)
+app = FastAPI(title = "Soldiers' quarters")
+
+DB_FILE = "info_db.sqlite"
+
 
 @app.post("/assignWithCsv/")
 async def import_csv(file: UploadFile = File(...)):
+    tempor_list = []
     if not file.filename.endswith('.csv'):
-        return JSONResponse(
-            status_code=400,
-            content={"error": "רק קבצי CSV מותרים"}
-        )    
-    file_path = os.path.join(UPLOAD_DIR, file.filename)
+        raise HTTPException(status_code=400, detail="File must be a CSV file")
 
-    with open(file_path, "wb") as f:
-        content = await file.read()
-        f.write(content)
+    contents = await file.read()
+    csv_text = contents.decode('utf-8')
+    csv_reader = csv.DictReader(io.StringIO(csv_text))
+    for row in csv_reader:
+        tempor_list.append(row)
+    return tempor_list
+        
+
     
-    return {
-        "message": "הקובץ הועלה בהצלחה!",
-        "filename": file.filename,
-        "size": len(content),
-        "path": file_path
-    }
