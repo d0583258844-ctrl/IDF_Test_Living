@@ -7,3 +7,22 @@ class Soldier:
         self.city = city
         self.distance_from_base_in_KM = distance_from_base_in_KM
         self.status = status
+
+
+
+class Room:
+    def __init__(self):
+        pass
+
+
+class HomeBulder:
+    def __init__(self,rooms):
+        self.rooms=list[Room]
+        
+
+class BaseBulder(HomeBulder):
+    def __init__(self):
+        super().__init__()
+
+
+
